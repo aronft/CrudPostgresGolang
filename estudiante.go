@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/lib/pq"
@@ -106,4 +107,55 @@ func ConsultarEstudiante() (estudiantes []Estudiante, err error) {
 	}
 
 	return estudiantes, nil
+}
+
+//ActualizarEstudiante actualiza la tabla de estudiantes
+func ActualizarEstudiante(e Estudiante) error {
+	q := `UPDATE estudiantes
+			SET name = $1, age = $2, active = $3, updated_at = now() WHERE id = $4`
+	db := getConection()
+	defer db.Close()
+
+	stmt, err := db.Prepare(q)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	r, err := stmt.Exec(e.Name, e.Age, e.Active, e.ID)
+	if err != nil {
+		return err
+	}
+
+	i, _ := r.RowsAffected()
+	if i != 1 {
+		return errors.New("Error: Se esperaba 1 fila afectada")
+	}
+
+	return nil
+}
+
+//BorrarEstudiante borra un estudiante de la BD
+func BorrarEstudiante(id int) error {
+	q := `DELETE FROM estudiantes WHERE id = $1`
+	db := getConection()
+	defer db.Close()
+
+	stmt, err := db.Prepare(q)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	r, err := stmt.Exec(id)
+	if err != nil {
+		return err
+	}
+	// verificamos cuantos registros fueron afectos
+	i, _ := r.RowsAffected()
+	fmt.Println(i)
+	if i != 1 {
+		return errors.New("Error: Se esperaba 1 fila afectada")
+	}
+	return nil
 }
