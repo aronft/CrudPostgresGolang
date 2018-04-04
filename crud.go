@@ -2,11 +2,10 @@ package main
 
 import (
 	"fmt"
-	"log"
 )
 
 func main() {
-	e := Estudiante{
+	/* e := Estudiante{
 		Name:   "Aron",
 		Age:    22,
 		Active: true,
@@ -16,5 +15,12 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("Creado exitosamente!!")
+	fmt.Println("Creado exitosamente!!") */
+
+	es, err := ConsultarEstudiante()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(es)
 }
